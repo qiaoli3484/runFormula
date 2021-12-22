@@ -90,7 +90,6 @@ func parseIF(str string) (string, bool) {
 		}
 		return "0", false
 	}
-	return compute(str), true
 	/*
 		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
 			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)

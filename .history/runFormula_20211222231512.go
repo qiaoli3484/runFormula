@@ -85,12 +85,8 @@ func parseIF(str string) (string, bool) {
 			if aabb(arr[0]) && aabb(arr[1]) {
 				return compute(s2), true
 			}
-		} else if aabb(s1) {
-			return compute(s2), true
 		}
-		return "0", false
 	}
-	return compute(str), true
 	/*
 		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
 			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)

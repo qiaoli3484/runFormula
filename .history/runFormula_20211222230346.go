@@ -70,27 +70,7 @@ func filter(script string) string {
 	return s1
 }
 
-func parseIF(str string) (string, bool) {
-	if str[:3] == "IF(" {
-		pos := strings.Index(str, ")")
-		s1 := mid(str, 4, pos-4)
-		s2 := mid(str, pos+1, len(str)-pos)
-		if strings.Contains(s1, "或") {
-			arr := strings.Split(s1, "或")
-			if aabb(arr[0]) || aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if strings.Contains(s1, "且") {
-			arr := strings.Split(s1, "且")
-			if aabb(arr[0]) && aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if aabb(s1) {
-			return compute(s2), true
-		}
-		return "0", false
-	}
-	return compute(str), true
+func parseIF() {
 	/*
 		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
 			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)
@@ -328,14 +308,62 @@ func aabb(str string) bool {
 		return tofloat(arr[0]) < tofloat(arr[1])
 	} else if sep == ">" {
 		return tofloat(arr[0]) > tofloat(arr[1])
-	} else if sep == ">=" {
-		return tofloat(arr[0]) >= tofloat(arr[1])
-	} else if sep == "<=" {
-		return tofloat(arr[0]) <= tofloat(arr[1])
-	} else if sep == "==" {
-		return tofloat(arr[0]) == tofloat(arr[1])
 	}
-	return false
+
+	/*
+	   .判断开始 (寻找文本 (参文本, “>=”, , 假) ＞ 0)
+	       _文组 ＝ 分割文本 (参文本, “>=”, )
+	       _符号 ＝ “>=”
+	   .判断 (寻找文本 (参文本, “<=”, , 假) ＞ 0)
+	       _文组 ＝ 分割文本 (参文本, “<=”, )
+	       _符号 ＝ “<=”
+	   .判断 (寻找文本 (参文本, “>”, , 假) ＞ 0)
+	       _文组 ＝ 分割文本 (参文本, “>”, )
+	       _符号 ＝ “>”
+	   .判断 (寻找文本 (参文本, “<”, , 假) ＞ 0)
+	       _文组 ＝ 分割文本 (参文本, “<”, )
+	       _符号 ＝ “<”
+	   .判断 (寻找文本 (参文本, “==”, , 假) ＞ 0)
+	       _文组 ＝ 分割文本 (参文本, “==”, )
+	       _符号 ＝ “==”
+	   .默认
+	       _符号 ＝ “0”
+	       返回 (假)
+
+	   .判断结束
+
+	   _文组 [1] ＝ 计算公式 (_文组 [1])
+	   _文组 [2] ＝ 计算公式 (_文组 [2])
+	   .判断开始 (_符号 ＝ “<”)
+	       .如果真 (到整数 (_文组 [1]) ＜ 到整数 (_文组 [2]))
+	           返回 (真)
+	       .如果真结束
+
+	   .判断 (_符号 ＝ “>”)
+	       .如果真 (到整数 (_文组 [1]) ＞ 到整数 (_文组 [2]))
+	           返回 (真)
+	       .如果真结束
+
+	   .判断 (_符号 ＝ “<=”)
+	       .如果真 (到整数 (_文组 [1]) ≤ 到整数 (_文组 [2]))
+	           返回 (真)
+	       .如果真结束
+
+	   .判断 (_符号 ＝ “>=”)
+	       .如果真 (到整数 (_文组 [1]) ≥ 到整数 (_文组 [2]))
+	           返回 (真)
+	       .如果真结束
+
+	   .判断 (_符号 ＝ “==”)
+	       .如果真 (到整数 (_文组 [1]) ＝ 到整数 (_文组 [2]))
+	           返回 (真)
+	       .如果真结束
+
+	   .默认
+
+	   .判断结束
+	   返回 (假)
+	*/
 }
 
 func tofloat(val string) float64 {

@@ -70,27 +70,15 @@ func filter(script string) string {
 	return s1
 }
 
-func parseIF(str string) (string, bool) {
+func parseIF(str string) {
 	if str[:3] == "IF(" {
 		pos := strings.Index(str, ")")
 		s1 := mid(str, 4, pos-4)
 		s2 := mid(str, pos+1, len(str)-pos)
 		if strings.Contains(s1, "或") {
-			arr := strings.Split(s1, "或")
-			if aabb(arr[0]) || aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if strings.Contains(s1, "且") {
-			arr := strings.Split(s1, "且")
-			if aabb(arr[0]) && aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if aabb(s1) {
-			return compute(s2), true
+			strings.Split(s1, "或")
 		}
-		return "0", false
 	}
-	return compute(str), true
 	/*
 		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
 			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)

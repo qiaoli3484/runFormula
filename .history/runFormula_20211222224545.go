@@ -1,47 +1,44 @@
 package runFormula
 
-import (
-	"strconv"
-	"strings"
-)
+import "strings"
 
 func Run(script string) {
 
-	//s1 := filter(script)
-
+	s1:=filter(script)
+	
 	// TAN计算
 	/*
+	tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
+	.判断循环首 (tan ＞ 0)
+		pos ＝ 寻找文本 (参公式, “)”, tan, 假)
+		.如果真 (pos ＜ 0)
+			跳出循环 ()
+		.如果真结束
+		len ＝ pos － tan ＋ 1
+		str ＝ 取文本中间 (参公式, tan, len)
+		str_ ＝ 到文本 (求正切 (到数值 (计算公式 (取文本中间 (str, 5, len － 5))) × #pi ÷ 180))
+		参公式 ＝ 子文本替换 (参公式, str, str_, , , 真)
 		tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
-		.判断循环首 (tan ＞ 0)
-			pos ＝ 寻找文本 (参公式, “)”, tan, 假)
-			.如果真 (pos ＜ 0)
-				跳出循环 ()
-			.如果真结束
-			len ＝ pos － tan ＋ 1
-			str ＝ 取文本中间 (参公式, tan, len)
-			str_ ＝ 到文本 (求正切 (到数值 (计算公式 (取文本中间 (str, 5, len － 5))) × #pi ÷ 180))
-			参公式 ＝ 子文本替换 (参公式, str, str_, , , 真)
-			tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
-		.判断循环尾 ()
-
-
-		.如果 (寻找文本 (参公式, “;”, , 假) ＞ 0 或 取文本左边 (参公式, 3) ＝ “IF(”)
-			公式组 ＝ 分割文本 (参公式, “;”, )
-			.计次循环首 (取数组成员数 (公式组), n)
-				.如果真 (if解析 (公式组 [n], rest))
-					返回 (rest)
-				.如果真结束
-
-			.计次循环尾 ()
-
-		.否则
-
-			.如果真 (if解析 (参公式, rest))
+	.判断循环尾 ()
+	
+	
+	.如果 (寻找文本 (参公式, “;”, , 假) ＞ 0 或 取文本左边 (参公式, 3) ＝ “IF(”)
+		公式组 ＝ 分割文本 (参公式, “;”, )
+		.计次循环首 (取数组成员数 (公式组), n)
+			.如果真 (if解析 (公式组 [n], rest))
 				返回 (rest)
 			.如果真结束
-
-		.如果结束
-		返回 (“0”)
+	
+		.计次循环尾 ()
+	
+	.否则
+	
+		.如果真 (if解析 (参公式, rest))
+			返回 (rest)
+		.如果真结束
+	
+	.如果结束
+	返回 (“0”)
 	*/
 
 }
@@ -70,59 +67,39 @@ func filter(script string) string {
 	return s1
 }
 
-func parseIF(str string) (string, bool) {
-	if str[:3] == "IF(" {
-		pos := strings.Index(str, ")")
-		s1 := mid(str, 4, pos-4)
-		s2 := mid(str, pos+1, len(str)-pos)
-		if strings.Contains(s1, "或") {
-			arr := strings.Split(s1, "或")
-			if aabb(arr[0]) || aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if strings.Contains(s1, "且") {
-			arr := strings.Split(s1, "且")
-			if aabb(arr[0]) && aabb(arr[1]) {
-				return compute(s2), true
-			}
-		} else if aabb(s1) {
-			return compute(s2), true
-		}
-		return "0", false
-	}
-	return compute(str), true
-	/*
-		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
-			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)
-			局文本 ＝ 取文本中间 (参文本, 4, 位置a － 4)
-			局结果 ＝ 取文本中间 (参文本, 位置a ＋ 1, 取文本长度 (参文本) － 位置a)
-
-			.判断开始 (寻找文本 (局文本, “或”, , 假) ＞ 0)
-				_文组 ＝ 分割文本 (局文本, “或”, )
-				.如果真 (判断大小 (_文组 [1]) 或 判断大小 (_文组 [2]))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.判断 (寻找文本 (局文本, “且”, , 假) ＞ 0)
-				_文组 ＝ 分割文本 (局文本, “且”, )
-				.如果真 (判断大小 (_文组 [1]) 且 判断大小 (_文组 [2]))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.默认
-
-				.如果真 (判断大小 (局文本))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.判断结束
-			返回 (假)
-		.如果真结束
-		res ＝ 计算公式 (参文本)
-		返回 (真)
+func parseIF() {
+/*
+	.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
+		位置a ＝ 寻找文本 (参文本, “)”, 3, 假)
+		局文本 ＝ 取文本中间 (参文本, 4, 位置a － 4)
+		局结果 ＝ 取文本中间 (参文本, 位置a ＋ 1, 取文本长度 (参文本) － 位置a)
+	
+		.判断开始 (寻找文本 (局文本, “或”, , 假) ＞ 0)
+			_文组 ＝ 分割文本 (局文本, “或”, )
+			.如果真 (判断大小 (_文组 [1]) 或 判断大小 (_文组 [2]))
+				res ＝ 计算公式 (局结果)
+				返回 (真)
+			.如果真结束
+	
+		.判断 (寻找文本 (局文本, “且”, , 假) ＞ 0)
+			_文组 ＝ 分割文本 (局文本, “且”, )
+			.如果真 (判断大小 (_文组 [1]) 且 判断大小 (_文组 [2]))
+				res ＝ 计算公式 (局结果)
+				返回 (真)
+			.如果真结束
+	
+		.默认
+	
+			.如果真 (判断大小 (局文本))
+				res ＝ 计算公式 (局结果)
+				返回 (真)
+			.如果真结束
+	
+		.判断结束
+		返回 (假)
+	.如果真结束
+	res ＝ 计算公式 (参文本)
+	返回 (真)
 	*/
 }
 
@@ -142,40 +119,40 @@ func compute(script string) string {
 
 	for i := range arr {
 
-		if ([]byte(arr[i]))[0] >= 48 {
+		if ([]byte()(arr[i]))[0] >=48{
 			ars.Push(arr[i])
 			continue
 		}
-		if arr[i] == "+" {
-			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+        if arr[i]=="+"{
+			aa,_=ars.Pop()
+			rr:=ars.Top()+aa
 
 			ars.Pop()
 			ars.Push(rr)
 		}
-		if arr[i] == "-" {
-			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+		if arr[i]=="-"{
+			aa,_=ars.Pop()
+			rr:=ars.Top()+aa
 
 			ars.Pop()
 			ars.Push(rr)
 		}
-		if arr[i] == "*" {
-			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+		if arr[i]=="*"{
+			aa,_=ars.Pop()
+			rr:=ars.Top()+aa
 
 			ars.Pop()
 			ars.Push(rr)
 		}
-		if arr[i] == "/" {
-			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+		if arr[i]=="/"{
+			aa,_=ars.Pop()
+			rr:=ars.Top()+aa
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 	}
-	return ars.Top()
+   return ars.Top()
 }
 
 //转后缀公式
@@ -198,7 +175,7 @@ func SuffixFormula(script string, pos int, arr []string) int {
 		}
 
 		if aa == "(" {
-			pos = SuffixFormula(script, pos, arr)
+			pos = SuffixFormula(script, pos)
 			continue
 		}
 
@@ -298,59 +275,81 @@ func priority(a, b string) int {
 	return 0
 }
 
+
 //判断大小
-func aabb(str string) bool {
-	arr := make([]string, 0)
-	sep := "0"
-	if strings.Contains(str, ">=") {
-		arr = strings.Split(str, ">=")
-		sep = ">="
-	} else if strings.Contains(str, "<=") {
-		arr = strings.Split(str, "<=")
-		sep = "<="
-	} else if strings.Contains(str, ">") {
-		arr = strings.Split(str, ">")
-		sep = ">"
-	} else if strings.Contains(str, "<") {
-		arr = strings.Split(str, "<")
-		sep = "<"
-	} else if strings.Contains(str, "==") {
-		arr = strings.Split(str, "==")
-		sep = "=="
-	} else {
-		sep = "0"
-		return false
-	}
-	arr[0] = compute(arr[0])
-	arr[1] = compute(arr[1])
+func aabb(){
 
-	if sep == "<" {
-		return tofloat(arr[0]) < tofloat(arr[1])
-	} else if sep == ">" {
-		return tofloat(arr[0]) > tofloat(arr[1])
-	} else if sep == ">=" {
-		return tofloat(arr[0]) >= tofloat(arr[1])
-	} else if sep == "<=" {
-		return tofloat(arr[0]) <= tofloat(arr[1])
-	} else if sep == "==" {
-		return tofloat(arr[0]) == tofloat(arr[1])
-	}
-	return false
+	.版本 2
+
+.判断开始 (寻找文本 (参文本, “>=”, , 假) ＞ 0)
+    _文组 ＝ 分割文本 (参文本, “>=”, )
+    _符号 ＝ “>=”
+.判断 (寻找文本 (参文本, “<=”, , 假) ＞ 0)
+    _文组 ＝ 分割文本 (参文本, “<=”, )
+    _符号 ＝ “<=”
+.判断 (寻找文本 (参文本, “>”, , 假) ＞ 0)
+    _文组 ＝ 分割文本 (参文本, “>”, )
+    _符号 ＝ “>”
+.判断 (寻找文本 (参文本, “<”, , 假) ＞ 0)
+    _文组 ＝ 分割文本 (参文本, “<”, )
+    _符号 ＝ “<”
+.判断 (寻找文本 (参文本, “==”, , 假) ＞ 0)
+    _文组 ＝ 分割文本 (参文本, “==”, )
+    _符号 ＝ “==”
+.默认
+    _符号 ＝ “0”
+    返回 (假)
+
+.判断结束
+
+_文组 [1] ＝ 计算公式 (_文组 [1])
+_文组 [2] ＝ 计算公式 (_文组 [2])
+.判断开始 (_符号 ＝ “<”)
+    .如果真 (到整数 (_文组 [1]) ＜ 到整数 (_文组 [2]))
+        返回 (真)
+    .如果真结束
+
+.判断 (_符号 ＝ “>”)
+    .如果真 (到整数 (_文组 [1]) ＞ 到整数 (_文组 [2]))
+        返回 (真)
+    .如果真结束
+
+.判断 (_符号 ＝ “<=”)
+    .如果真 (到整数 (_文组 [1]) ≤ 到整数 (_文组 [2]))
+        返回 (真)
+    .如果真结束
+
+.判断 (_符号 ＝ “>=”)
+    .如果真 (到整数 (_文组 [1]) ≥ 到整数 (_文组 [2]))
+        返回 (真)
+    .如果真结束
+
+.判断 (_符号 ＝ “==”)
+    .如果真 (到整数 (_文组 [1]) ＝ 到整数 (_文组 [2]))
+        返回 (真)
+    .如果真结束
+
+.默认
+
+.判断结束
+返回 (假)
+
 }
 
-func tofloat(val string) float64 {
-	n, _ := strconv.ParseFloat(val, 32)
-	return n
-}
+
+
+
 
 type Stack struct {
 	pos int
 	str [20]string
 }
 
-func newStack() *Stack {
+
+func newStack() *Stack{
 	return &Stack{pos: -1, str: [20]string{}}
 }
+
 
 //入栈
 func (s *Stack) Push(val string) {
