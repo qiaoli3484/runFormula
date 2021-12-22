@@ -37,7 +37,8 @@ func parse() {
 //计算结果
 func compute(script string) string {
 	arr := make([]string, 0)
-	ars := Stack{pos: -1, str: [20]string{}}
+	ars := Stack{}
+	var aa string
 	SuffixFormula(script, 0, arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
@@ -49,8 +50,44 @@ func compute(script string) string {
 
 	for i := range arr {
 
-	}
+		if ([]byte()(arr[i]))[0] >=48{
+			ars.Push(arr[i])
+			continue
+		}
+        if arr[i]=="+"{
+			aa,_=ars.Pop()
+			rr:=ars.Top()+aa
 
+			ars.Pop()
+			ars.Push(rr)
+		}
+ /*
+    .如果真 (参公式 [n] ＝ “+”)
+        符号_栈.pop (aa)
+        rr ＝ 到数值 (符号_栈.top ()) ＋ 到数值 (aa)
+        符号_栈.pop ()
+        符号_栈.push (到文本 (rr))
+    .如果真结束
+    .如果真 (参公式 [n] ＝ “-”)
+        符号_栈.pop (aa)
+        rr ＝ 到数值 (符号_栈.top ()) － 到数值 (aa)
+        符号_栈.pop ()
+        符号_栈.push (到文本 (rr))
+    .如果真结束
+    .如果真 (参公式 [n] ＝ “*”)
+        符号_栈.pop (aa)
+        rr ＝ 到数值 (符号_栈.top ()) × 到数值 (aa)
+        符号_栈.pop ()
+        符号_栈.push (到文本 (rr))
+    .如果真结束
+    .如果真 (参公式 [n] ＝ “/”)
+        符号_栈.pop (aa)
+        rr ＝ 到数值 (符号_栈.top ()) ÷ 到数值 (aa)
+        符号_栈.pop ()
+        符号_栈.push (到文本 (rr))
+
+	}
+*/
 }
 
 //转后缀公式
@@ -177,6 +214,12 @@ type Stack struct {
 	pos int
 	str [20]string
 }
+
+
+func newStack() *Stack{
+	return &Stack{pos: -1, str: [20]string{}}
+}
+
 
 //入栈
 func (s *Stack) Push(val string) {
