@@ -1,5 +1,0 @@
-package runFormula
-
-func Testaaa() {
-
-}
