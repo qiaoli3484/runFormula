@@ -29,3 +29,22 @@ func filter(script string) string {
 	*/
 	return s1
 }
+
+func parse() {
+
+}
+
+//计算结果
+func compute(script string) {
+
+}
+
+//转后缀公式
+func SuffixFormula(script string, pos int) {
+	n := len(script)
+	for pos < n {
+		pos++
+
+	}
+
+}
