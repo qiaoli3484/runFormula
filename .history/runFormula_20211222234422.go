@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func Run(script string) string {
+func Run(script string) {
 
 	s1 := filter(script)
 	tan := strings.Index(s1, "TAN(")
@@ -26,17 +26,7 @@ func Run(script string) string {
 	}
 	if strings.Contains(s1, ";") || strings.Contains(s1, "IF(") {
 		arr := strings.Split(s1, ";")
-		for i := range arr {
-			if res, ok := parseIF(arr[i]); ok {
-				return res
-			}
-		}
-	} else {
-		if res, ok := parseIF(s1); ok {
-			return res
-		}
 	}
-	return "0"
 	// TAN计算
 	/*
 		tan ＝ 寻找文本 (参公式, “TAN(”, , 假)

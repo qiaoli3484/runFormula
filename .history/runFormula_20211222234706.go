@@ -32,11 +32,8 @@ func Run(script string) string {
 			}
 		}
 	} else {
-		if res, ok := parseIF(s1); ok {
-			return res
-		}
+
 	}
-	return "0"
 	// TAN计算
 	/*
 		tan ＝ 寻找文本 (参公式, “TAN(”, , 假)

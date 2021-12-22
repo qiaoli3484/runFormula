@@ -1,12 +1,11 @@
 package runFormula
 
 import (
-	"math"
 	"strconv"
 	"strings"
 )
 
-func Run(script string) string {
+func Run(script string) {
 
 	s1 := filter(script)
 	tan := strings.Index(s1, "TAN(")
@@ -15,28 +14,9 @@ func Run(script string) string {
 		if pos < 0 {
 			break
 		}
-		num := pos - tan + 1
-		s2 := mid(s1, tan, num)
+		len := pos - tan + 1
 
-		s3 := math.Tan(tofloat(compute(mid(s2, 5, num-5))) * math.Pi / 180)
-
-		s1 = strings.Replace(s1, s2, strconv.Itoa(int(s3)), -1) //精度需要更改
-
-		tan = strings.Index(s1, "TAN(")
 	}
-	if strings.Contains(s1, ";") || strings.Contains(s1, "IF(") {
-		arr := strings.Split(s1, ";")
-		for i := range arr {
-			if res, ok := parseIF(arr[i]); ok {
-				return res
-			}
-		}
-	} else {
-		if res, ok := parseIF(s1); ok {
-			return res
-		}
-	}
-	return "0"
 	// TAN计算
 	/*
 		tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
