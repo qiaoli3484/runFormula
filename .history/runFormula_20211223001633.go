@@ -160,7 +160,7 @@ func compute(script string) string {
 	arr := make([]string, 0)
 	ars := Stack{}
 	var aa string
-	SuffixFormula(script, 0, arr)
+	SuffixFormula(script, -1, arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
 	}
@@ -213,11 +213,8 @@ func SuffixFormula(script string, pos int, arr []string) int {
 	var cc, tt string
 	ars := Stack{pos: -1, str: [20]string{}}
 
-	for {
+	for pos < n {
 		pos++
-		if pos < n {
-			break
-		}
 		aa := mid(script, pos, 1)
 
 		if []byte(aa)[0] > 48 || []byte(aa)[0] == 46 { // 区分小数点
@@ -293,13 +290,13 @@ func SuffixFormula(script string, pos int, arr []string) int {
 			break
 		}
 	}
-	fmt.Println(arr)
+
 	return n
 }
 
 //取文本中间
 func mid(str string, pos, num int) string {
-	fmt.Println(str, pos, pos+num)
+	fmt.Println(str, pos, pos+num, str[pos:pos+num])
 	return str[pos : pos+num]
 }
 

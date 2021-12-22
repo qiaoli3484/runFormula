@@ -216,7 +216,7 @@ func SuffixFormula(script string, pos int, arr []string) int {
 	for {
 		pos++
 		if pos < n {
-			break
+
 		}
 		aa := mid(script, pos, 1)
 

@@ -160,7 +160,7 @@ func compute(script string) string {
 	arr := make([]string, 0)
 	ars := Stack{}
 	var aa string
-	SuffixFormula(script, 0, arr)
+	SuffixFormula(script, -1, arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
 	}
@@ -213,11 +213,7 @@ func SuffixFormula(script string, pos int, arr []string) int {
 	var cc, tt string
 	ars := Stack{pos: -1, str: [20]string{}}
 
-	for {
-		pos++
-		if pos < n {
-			break
-		}
+	for pos < n {
 		aa := mid(script, pos, 1)
 
 		if []byte(aa)[0] > 48 || []byte(aa)[0] == 46 { // 区分小数点
@@ -278,6 +274,7 @@ func SuffixFormula(script string, pos int, arr []string) int {
 		if level == 2 { //' 栈顶大
 			arr = append(arr, aa)
 		}
+		pos++
 	}
 	if cc != "" {
 		arr = append(arr, cc)

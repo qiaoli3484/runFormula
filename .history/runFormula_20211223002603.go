@@ -213,11 +213,8 @@ func SuffixFormula(script string, pos int, arr []string) int {
 	var cc, tt string
 	ars := Stack{pos: -1, str: [20]string{}}
 
-	for {
+	for pos < n {
 		pos++
-		if pos < n {
-			break
-		}
 		aa := mid(script, pos, 1)
 
 		if []byte(aa)[0] > 48 || []byte(aa)[0] == 46 { // 区分小数点
