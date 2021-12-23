@@ -19,7 +19,7 @@ func Run(script string) string {
 		num := pos - tan + 1
 		s2 := mid(s1, tan, num)
 
-		s3 := math.Tan(tofloat(compute(mid(s2, 5, num-5))) * math.Pi / 180)
+		s3 := math.Tan(tofloat(compute(mid(s2, 4, num-4))) * math.Pi / 180)
 
 		s1 = strings.Replace(s1, s2, strconv.Itoa(int(s3)), -1) //精度需要更改
 
@@ -96,8 +96,8 @@ func filter(script string) string {
 func parseIF(str string) (string, bool) {
 	if str[:3] == "IF(" {
 		pos := strings.Index(str, ")")
-		s1 := mid(str, 4, pos-4)
-		s2 := mid(str, pos+1, len(str)-pos)
+		s1 := mid(str, 3, pos-3)
+		s2 := mid(str, pos+1, len(str)-pos-1)
 		if strings.Contains(s1, "或") {
 			arr := strings.Split(s1, "或")
 			if aabb(arr[0]) || aabb(arr[1]) {
@@ -296,8 +296,9 @@ func SuffixFormula(script string, pos int) (int, []string) {
 //取文本中间
 func mid(str string, pos, num int) string {
 	s1 := make([]byte, num)
+	//fmt.Println(pos, pos+num)
 	copy(s1, str[pos:pos+num])
-	//fmt.Println(s1, string(s1))
+
 	return Byte2Str(s1)
 }
 
