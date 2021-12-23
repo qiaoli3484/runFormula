@@ -157,10 +157,10 @@ func parseIF(str string) (string, bool) {
 
 //计算结果
 func compute(script string) string {
-	arr := make([]string, 0)
 	ars := Stack{}
-	var aa string
-	SuffixFormula(script, 0, arr)
+	var aa, rr string
+	_, arr := SuffixFormula(script, -1)
+	fmt.Println(arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
 	}
@@ -177,60 +177,63 @@ func compute(script string) string {
 		}
 		if arr[i] == "+" {
 			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+			rr = floatto(tofloat(ars.Top()) + tofloat(aa))
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "-" {
 			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+			rr = floatto(tofloat(ars.Top()) - tofloat(aa))
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "*" {
 			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+			rr = floatto(tofloat(ars.Top()) * tofloat(aa))
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "/" {
 			aa, _ = ars.Pop()
-			rr := ars.Top() + aa
+			rr = floatto(tofloat(ars.Top()) / tofloat(aa))
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 	}
-	return ars.Top()
+	return rr
 }
 
 //转后缀公式
-func SuffixFormula(script string, pos int, arr []string) int {
+func SuffixFormula(script string, pos int) (int, []string) {
 	n := len(script)
 	var cc, tt string
 	ars := Stack{pos: -1, str: [20]string{}}
-
+	arr := make([]string, 0)
 	for {
+
 		pos++
-		if pos < n {
+		if pos >= n {
 			break
 		}
 		aa := mid(script, pos, 1)
-
-		if []byte(aa)[0] > 48 || []byte(aa)[0] == 46 { // 区分小数点
+		if []byte(aa)[0] >= 48 || []byte(aa)[0] == 46 { // 区分小数点
 			cc += aa
 			continue
 		}
+		fmt.Println(ars, "后缀", arr, cc)
 		if cc != "" {
 			arr = append(arr, cc)
 			cc = ""
 		}
 
 		if aa == "(" {
-			pos = SuffixFormula(script, pos, arr)
+			var ab []string
+			pos, ab = SuffixFormula(script, pos)
+			arr = append(arr, ab...)
 			continue
 		}
 
@@ -245,7 +248,7 @@ func SuffixFormula(script string, pos int, arr []string) int {
 					break
 				}
 			}
-			return pos
+			return pos, arr
 		}
 
 		if ars.Empty() {
@@ -272,11 +275,11 @@ func SuffixFormula(script string, pos int, arr []string) int {
 					break
 				}
 			}
-			arr = append(arr, aa)
+			ars.Push(aa)
 			continue
 		}
 		if level == 2 { //' 栈顶大
-			arr = append(arr, aa)
+			ars.Push(aa)
 		}
 	}
 	if cc != "" {
@@ -293,14 +296,15 @@ func SuffixFormula(script string, pos int, arr []string) int {
 			break
 		}
 	}
-	fmt.Println(arr)
-	return n
+	return pos, arr
 }
 
 //取文本中间
 func mid(str string, pos, num int) string {
-	fmt.Println(str, pos, pos+num)
-	return str[pos : pos+num]
+	s1 := make([]byte, num)
+	copy(s1, str[pos:pos+num])
+	fmt.Println(s1, string(s1))
+	return string(s1)
 }
 
 //符号优先级
@@ -373,6 +377,12 @@ func aabb(str string) bool {
 
 func tofloat(val string) float64 {
 	n, _ := strconv.ParseFloat(val, 32)
+	return n
+}
+
+func floatto(val float64) string {
+	n := strconv.FormatFloat(val, 'f', 1, 32)
+	fmt.Println(val, "float32->", n)
 	return n
 }
 
