@@ -1,10 +1,10 @@
 package runFormula
 
 import (
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
+	"unsafe"
 )
 
 func Run(script string) string {
@@ -77,7 +77,10 @@ func Run(script string) string {
 
 //过滤特殊符号
 func filter(script string) string {
+
 	s1 := strings.ToUpper(script)
+
+	s1 = strings.TrimSpace(s1)
 	s1 = strings.ReplaceAll(s1, "（", "(")
 
 	s1 = strings.ReplaceAll(s1, "（", "(")
@@ -85,17 +88,8 @@ func filter(script string) string {
 	s1 = strings.ReplaceAll(s1, "；", ";")
 	s1 = strings.ReplaceAll(s1, ";;", ";")
 
-	/*
-		参文本 ＝ 到大写 (参文本)
-		参文本 ＝ 子文本替换 (参文本, 到文本 ({ 10 }),"", , , 真)
-		参文本 ＝ 子文本替换 (参文本, 到文本 ({ 13 }),"", , , 真)
-		参文本 ＝ 子文本替换 (参文本,"（","(", , , 真)
-		参文本 ＝ 子文本替换 (参文本,"）",")", , , 真)
-		参文本 ＝ 子文本替换 (参文本,"；",";", , , 真)
-		参文本 ＝ 子文本替换 (参文本,";;",";", , , 真)
-		参文本 ＝ 子文本替换 (参文本,"判断","IF", , , 真)
-		参文本 ＝ 子文本替换 (参文本,"!","=", , , 真)  ' 替代等号
-	*/
+	s1 = strings.ReplaceAll(s1, "判断", "IF")
+	s1 = strings.ReplaceAll(s1, "!", "=") //替代等号
 	return s1
 }
 
@@ -160,7 +154,7 @@ func compute(script string) string {
 	ars := Stack{}
 	var aa, rr string
 	_, arr := SuffixFormula(script, -1)
-	fmt.Println(arr)
+	//fmt.Println(arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
 	}
@@ -224,7 +218,7 @@ func SuffixFormula(script string, pos int) (int, []string) {
 			cc += aa
 			continue
 		}
-		fmt.Println(ars, "后缀", arr, cc)
+		//fmt.Println(ars, "后缀", arr, cc)
 		if cc != "" {
 			arr = append(arr, cc)
 			cc = ""
@@ -303,8 +297,12 @@ func SuffixFormula(script string, pos int) (int, []string) {
 func mid(str string, pos, num int) string {
 	s1 := make([]byte, num)
 	copy(s1, str[pos:pos+num])
-	fmt.Println(s1, string(s1))
-	return string(s1)
+	//fmt.Println(s1, string(s1))
+	return Byte2Str(s1)
+}
+
+func Byte2Str(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
 }
 
 //符号优先级
@@ -337,7 +335,7 @@ func priority(a, b string) int {
 
 //判断大小
 func aabb(str string) bool {
-	arr := make([]string, 0)
+	var arr []string
 	sep := "0"
 	if strings.Contains(str, ">=") {
 		arr = strings.Split(str, ">=")
@@ -382,7 +380,7 @@ func tofloat(val string) float64 {
 
 func floatto(val float64) string {
 	n := strconv.FormatFloat(val, 'f', 1, 32)
-	fmt.Println(val, "float32->", n)
+	//fmt.Println(val, "float32->", n)
 	return n
 }
 
@@ -425,8 +423,6 @@ func (s *Stack) Top() string {
 }
 
 func (s *Stack) Empty() bool {
-	if s.pos == -1 {
-		return true
-	}
-	return false
+	return s.pos == -1
+
 }
