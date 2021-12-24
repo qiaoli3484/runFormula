@@ -8,8 +8,8 @@ import (
 )
 
 //计算公式
-//ceil 取整
-func Run(script string, ceil bool) string {
+//ceil 小数位数,-1不限
+func Run(script string, ceil int) string {
 
 	s1 := filter(script)
 	tan := strings.Index(s1, "TAN(")
@@ -95,7 +95,7 @@ func filter(script string) string {
 	return s1
 }
 
-func parseIF(str string, ceil bool) (string, bool) {
+func parseIF(str string, ceil int) (string, bool) {
 	if str[:3] == "IF(" {
 		pos := strings.Index(str, ")")
 		s1 := mid(str, 3, pos-3)
@@ -152,8 +152,8 @@ func parseIF(str string, ceil bool) (string, bool) {
 }
 
 //计算结果
-//ceil 是否取整
-func compute(script string, ceil bool) string {
+//ceil 位数
+func compute(script string, ceil int) string {
 	ars := Stack{}
 	var aa, rr string
 	_, arr := suffixFormula(script, -1)
@@ -338,7 +338,7 @@ func priority(a, b string) int {
 }
 
 //判断大小
-func aabb(str string, ceil bool) bool {
+func aabb(str string, ceil int) bool {
 	var arr []string
 	sep := "0"
 	if strings.Contains(str, ">=") {
@@ -383,12 +383,9 @@ func tofloat(val string) float64 {
 }
 
 //float32到文本
-//ceil 是否取整
-func floatto(val float64, ceil bool) string {
-	if ceil {
-		return strconv.FormatFloat(val, 'f', 0, 32)
-	}
-	return strconv.FormatFloat(val, 'f', -1, 32)
+//ceil 位数
+func floatto(val float64, ceil int) string {
+	return strconv.FormatFloat(val, 'f', ceil, 32)
 }
 
 type Stack struct {
