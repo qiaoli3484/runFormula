@@ -4,7 +4,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"unsafe"
 )
 
 //计算公式
@@ -40,41 +39,6 @@ func Run(script string, ceil int) string {
 		}
 	}
 	return "0"
-	// TAN计算
-	/*
-		tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
-		.判断循环首 (tan ＞ 0)
-			pos ＝ 寻找文本 (参公式, “)”, tan, 假)
-			.如果真 (pos ＜ 0)
-				跳出循环 ()
-			.如果真结束
-			len ＝ pos － tan ＋ 1
-			str ＝ 取文本中间 (参公式, tan, len)
-			str_ ＝ 到文本 (求正切 (到数值 (计算公式 (取文本中间 (str, 5, len － 5))) × #pi ÷ 180))
-			参公式 ＝ 子文本替换 (参公式, str, str_, , , 真)
-			tan ＝ 寻找文本 (参公式, “TAN(”, , 假)
-		.判断循环尾 ()
-
-
-		.如果 (寻找文本 (参公式, “;”, , 假) ＞ 0 或 取文本左边 (参公式, 3) ＝ “IF(”)
-			公式组 ＝ 分割文本 (参公式, “;”, )
-			.计次循环首 (取数组成员数 (公式组), n)
-				.如果真 (if解析 (公式组 [n], rest))
-					返回 (rest)
-				.如果真结束
-
-			.计次循环尾 ()
-
-		.否则
-
-			.如果真 (if解析 (参公式, rest))
-				返回 (rest)
-			.如果真结束
-
-		.如果结束
-		返回 (“0”)
-	*/
-
 }
 
 //过滤特殊符号
@@ -116,39 +80,6 @@ func parseIF(str string, ceil int) (string, bool) {
 		return "0", false
 	}
 	return compute(str, ceil), true
-	/*
-		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
-			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)
-			局文本 ＝ 取文本中间 (参文本, 4, 位置a － 4)
-			局结果 ＝ 取文本中间 (参文本, 位置a ＋ 1, 取文本长度 (参文本) － 位置a)
-
-			.判断开始 (寻找文本 (局文本, “或”, , 假) ＞ 0)
-				_文组 ＝ 分割文本 (局文本, “或”, )
-				.如果真 (判断大小 (_文组 [1]) 或 判断大小 (_文组 [2]))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.判断 (寻找文本 (局文本, “且”, , 假) ＞ 0)
-				_文组 ＝ 分割文本 (局文本, “且”, )
-				.如果真 (判断大小 (_文组 [1]) 且 判断大小 (_文组 [2]))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.默认
-
-				.如果真 (判断大小 (局文本))
-					res ＝ 计算公式 (局结果)
-					返回 (真)
-				.如果真结束
-
-			.判断结束
-			返回 (假)
-		.如果真结束
-		res ＝ 计算公式 (参文本)
-		返回 (真)
-	*/
 }
 
 //计算结果
@@ -296,19 +227,6 @@ func suffixFormula(script string, pos int) (int, []string) {
 	return pos, arr
 }
 
-//取文本中间
-func mid(str string, pos, num int) string {
-	s1 := make([]byte, num)
-	//fmt.Println(pos, pos+num)
-	copy(s1, str[pos:pos+num])
-
-	return Byte2Str(s1)
-}
-
-func Byte2Str(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
-}
-
 //符号优先级
 func priority(a, b string) int {
 
@@ -375,58 +293,4 @@ func aabb(str string, ceil int) bool {
 		return tofloat(arr[0]) == tofloat(arr[1])
 	}
 	return false
-}
-
-func tofloat(val string) float64 {
-	n, _ := strconv.ParseFloat(val, 32)
-	return n
-}
-
-//float32到文本
-//ceil 位数
-func floatto(val float64, ceil int) string {
-	return strconv.FormatFloat(val, 'f', ceil, 32)
-}
-
-type Stack struct {
-	pos int
-	str [20]string
-}
-
-func newStack() *Stack {
-	return &Stack{pos: -1, str: [20]string{}}
-}
-
-//入栈
-func (s *Stack) Push(val string) {
-	s.pos++
-	if s.pos > 19 {
-		return
-	}
-	s.str[s.pos] = val
-}
-
-//出栈
-func (s *Stack) Pop() (string, bool) {
-	if s.pos == -1 {
-		return "", false
-	}
-	defer func() { s.pos-- }()
-	return s.str[s.pos], true
-}
-
-func (s *Stack) Clear() {
-	s.pos = 0
-}
-
-func (s *Stack) Top() string {
-	if s.pos > 19 || s.pos <= -1 {
-		return ""
-	}
-	return s.str[s.pos]
-}
-
-func (s *Stack) Empty() bool {
-	return s.pos == -1
-
 }
