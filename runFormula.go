@@ -7,7 +7,9 @@ import (
 	"unsafe"
 )
 
-func Run(script string) string {
+//计算公式
+//ceil 取整
+func Run(script string, ceil bool) string {
 
 	s1 := filter(script)
 	tan := strings.Index(s1, "TAN(")
@@ -19,7 +21,7 @@ func Run(script string) string {
 		num := pos - tan + 1
 		s2 := mid(s1, tan, num)
 
-		s3 := math.Tan(tofloat(compute(mid(s2, 4, num-4))) * math.Pi / 180)
+		s3 := math.Tan(tofloat(compute(mid(s2, 4, num-4), ceil)) * math.Pi / 180)
 
 		s1 = strings.Replace(s1, s2, strconv.Itoa(int(s3)), -1) //精度需要更改
 
@@ -28,12 +30,12 @@ func Run(script string) string {
 	if strings.Contains(s1, ";") || strings.Contains(s1, "IF(") {
 		arr := strings.Split(s1, ";")
 		for i := range arr {
-			if res, ok := parseIF(arr[i]); ok {
+			if res, ok := parseIF(arr[i], ceil); ok {
 				return res
 			}
 		}
 	} else {
-		if res, ok := parseIF(s1); ok {
+		if res, ok := parseIF(s1, ceil); ok {
 			return res
 		}
 	}
@@ -93,27 +95,27 @@ func filter(script string) string {
 	return s1
 }
 
-func parseIF(str string) (string, bool) {
+func parseIF(str string, ceil bool) (string, bool) {
 	if str[:3] == "IF(" {
 		pos := strings.Index(str, ")")
 		s1 := mid(str, 3, pos-3)
 		s2 := mid(str, pos+1, len(str)-pos-1)
 		if strings.Contains(s1, "或") {
 			arr := strings.Split(s1, "或")
-			if aabb(arr[0]) || aabb(arr[1]) {
-				return compute(s2), true
+			if aabb(arr[0], ceil) || aabb(arr[1], ceil) {
+				return compute(s2, ceil), true
 			}
 		} else if strings.Contains(s1, "且") {
 			arr := strings.Split(s1, "且")
-			if aabb(arr[0]) && aabb(arr[1]) {
-				return compute(s2), true
+			if aabb(arr[0], ceil) && aabb(arr[1], ceil) {
+				return compute(s2, ceil), true
 			}
-		} else if aabb(s1) {
-			return compute(s2), true
+		} else if aabb(s1, ceil) {
+			return compute(s2, ceil), true
 		}
 		return "0", false
 	}
-	return compute(str), true
+	return compute(str, ceil), true
 	/*
 		.如果真 (取文本左边 (参文本, 3) ＝ “IF(”)
 			位置a ＝ 寻找文本 (参文本, “)”, 3, 假)
@@ -150,10 +152,11 @@ func parseIF(str string) (string, bool) {
 }
 
 //计算结果
-func compute(script string) string {
+//ceil 是否取整
+func compute(script string, ceil bool) string {
 	ars := Stack{}
 	var aa, rr string
-	_, arr := SuffixFormula(script, -1)
+	_, arr := suffixFormula(script, -1)
 	//fmt.Println(arr)
 	if len(arr) == 1 { //只有一个数不用计算
 		return arr[0]
@@ -171,28 +174,28 @@ func compute(script string) string {
 		}
 		if arr[i] == "+" {
 			aa, _ = ars.Pop()
-			rr = floatto(tofloat(ars.Top()) + tofloat(aa))
+			rr = floatto(tofloat(ars.Top())+tofloat(aa), ceil)
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "-" {
 			aa, _ = ars.Pop()
-			rr = floatto(tofloat(ars.Top()) - tofloat(aa))
+			rr = floatto(tofloat(ars.Top())-tofloat(aa), ceil)
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "*" {
 			aa, _ = ars.Pop()
-			rr = floatto(tofloat(ars.Top()) * tofloat(aa))
+			rr = floatto(tofloat(ars.Top())*tofloat(aa), ceil)
 
 			ars.Pop()
 			ars.Push(rr)
 		}
 		if arr[i] == "/" {
 			aa, _ = ars.Pop()
-			rr = floatto(tofloat(ars.Top()) / tofloat(aa))
+			rr = floatto(tofloat(ars.Top())/tofloat(aa), ceil)
 
 			ars.Pop()
 			ars.Push(rr)
@@ -202,7 +205,7 @@ func compute(script string) string {
 }
 
 //转后缀公式
-func SuffixFormula(script string, pos int) (int, []string) {
+func suffixFormula(script string, pos int) (int, []string) {
 	n := len(script)
 	var cc, tt string
 	ars := Stack{pos: -1, str: [20]string{}}
@@ -226,7 +229,7 @@ func SuffixFormula(script string, pos int) (int, []string) {
 
 		if aa == "(" {
 			var ab []string
-			pos, ab = SuffixFormula(script, pos)
+			pos, ab = suffixFormula(script, pos)
 			arr = append(arr, ab...)
 			continue
 		}
@@ -335,7 +338,7 @@ func priority(a, b string) int {
 }
 
 //判断大小
-func aabb(str string) bool {
+func aabb(str string, ceil bool) bool {
 	var arr []string
 	sep := "0"
 	if strings.Contains(str, ">=") {
@@ -357,8 +360,8 @@ func aabb(str string) bool {
 		sep = "0"
 		return false
 	}
-	arr[0] = compute(arr[0])
-	arr[1] = compute(arr[1])
+	arr[0] = compute(arr[0], ceil)
+	arr[1] = compute(arr[1], ceil)
 
 	if sep == "<" {
 		return tofloat(arr[0]) < tofloat(arr[1])
@@ -379,10 +382,13 @@ func tofloat(val string) float64 {
 	return n
 }
 
-func floatto(val float64) string {
-	n := strconv.FormatFloat(val, 'f', 1, 32)
-	//fmt.Println(val, "float32->", n)
-	return n
+//float32到文本
+//ceil 是否取整
+func floatto(val float64, ceil bool) string {
+	if ceil {
+		return strconv.FormatFloat(val, 'f', 0, 32)
+	}
+	return strconv.FormatFloat(val, 'f', -1, 32)
 }
 
 type Stack struct {
