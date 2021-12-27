@@ -1,4 +1,4 @@
-package runFormula
+package runformula
 
 import (
 	"strconv"
