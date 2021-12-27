@@ -1,4 +1,4 @@
-package runFormula
+package runformula
 
 type Stack struct {
 	pos int
