@@ -4,7 +4,7 @@ import "testing"
 
 func TestAaa(t *testing.T) {
 
-	t.Log(Run("(1030+977)*2000/1000000", 2))
+	t.Log(Run("(1030+977)*2000/1000000*20", 2))
 	t.Log("hello world")
 }
 
